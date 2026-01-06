@@ -7,4 +7,4 @@ Etapas:
 1) Camada Bronze: Pyspark no Google Collab
 2) Camada Silver: Pyspark no Google Collab
 3) Camada Gold: Pipeline no Azure Data Factory (Data Lake Storage Gen2 -> Azure SQL db)
-4) Report: Power BI com conxeão ao Azure SQL DB.
+4) Report: Power BI com conxeção ao Azure SQL DB.
