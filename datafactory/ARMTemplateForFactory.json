@@ -1,0 +1,673 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "fiap-f3-tc-pnad"
+        },
+        "fiap_input_dl_ls_accountKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accountKey' of 'fiap_input_dl_ls'"
+        },
+        "fiap_out_sqldb_ls_password": {
+            "type": "secureString",
+            "metadata": "Secure string for 'password' of 'fiap_out_sqldb_ls'"
+        },
+        "fiap_input_dl_ls_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://fiapf3tcdl.dfs.core.windows.net/"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_server": {
+            "type": "string",
+            "defaultValue": "fiapf3tc-srv.database.windows.net"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_database": {
+            "type": "string",
+            "defaultValue": "fiapf3tc-db"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_userName": {
+            "type": "string",
+            "defaultValue": "adm"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/silverCSV')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "fiap_input_dl_ls",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileSystem": "dados-spark-fiap-f3-tc"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "uf",
+                        "type": "String"
+                    },
+                    {
+                        "name": "regiao",
+                        "type": "String"
+                    },
+                    {
+                        "name": "situacao_domicilio",
+                        "type": "String"
+                    },
+                    {
+                        "name": "idade",
+                        "type": "String"
+                    },
+                    {
+                        "name": "sexo",
+                        "type": "String"
+                    },
+                    {
+                        "name": "cor",
+                        "type": "String"
+                    },
+                    {
+                        "name": "escolaridade",
+                        "type": "String"
+                    },
+                    {
+                        "name": "tipo_trabalho",
+                        "type": "String"
+                    },
+                    {
+                        "name": "horas_trabalho_semana_normalmente",
+                        "type": "String"
+                    },
+                    {
+                        "name": "horas_trabalho_semana_passada",
+                        "type": "String"
+                    },
+                    {
+                        "name": "faixa_rendimento",
+                        "type": "String"
+                    },
+                    {
+                        "name": "plano_de_saude",
+                        "type": "String"
+                    },
+                    {
+                        "name": "dificuldade_respirar",
+                        "type": "String"
+                    },
+                    {
+                        "name": "perda_olfato_paladar",
+                        "type": "String"
+                    },
+                    {
+                        "name": "febre",
+                        "type": "String"
+                    },
+                    {
+                        "name": "tosse",
+                        "type": "String"
+                    },
+                    {
+                        "name": "dor_no_peito",
+                        "type": "String"
+                    },
+                    {
+                        "name": "foi_a_algum_estabelecimento_saude",
+                        "type": "String"
+                    },
+                    {
+                        "name": "fez_teste_covid",
+                        "type": "String"
+                    },
+                    {
+                        "name": "resultado_exames",
+                        "type": "String"
+                    },
+                    {
+                        "name": "restricao_de_contato",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/fiap_input_dl_ls')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/covidSQL')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "fiap_out_sqldb_ls",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "AzureSqlTable",
+                "schema": [
+                    {
+                        "name": "uf",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "regiao",
+                        "type": "nvarchar"
+                    },
+                    {
+                        "name": "situacao_domicilio",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "idade",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "sexo",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "cor",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "escolaridade",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "tipo_trabalho",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "horas_trabalho_semana_normalmente",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "horas_trabalho_semana_passada",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "faixa_rendimento",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "plano_de_saude",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "dificuldade_respirar",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "perda_olfato_paladar",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "febre",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "tosse",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "dor_no_peito",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "foi_a_algum_estabelecimento_saude",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "fez_teste_covid",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "resultado_exames",
+                        "type": "int",
+                        "precision": 10
+                    },
+                    {
+                        "name": "restricao_de_contato",
+                        "type": "int",
+                        "precision": 10
+                    }
+                ],
+                "typeProperties": {
+                    "schema": "dbo",
+                    "table": "DadosPnadCovid"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/fiap_out_sqldb_ls')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/fiap_input_dl_ls')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "description": "Link service para conectar ao dados que estão no data lake",
+                "annotations": [],
+                "type": "AzureBlobFS",
+                "typeProperties": {
+                    "url": "[parameters('fiap_input_dl_ls_properties_typeProperties_url')]",
+                    "accountKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('fiap_input_dl_ls_accountKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/fiap_out_sqldb_ls')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "description": "LS do DL para SQL DB",
+                "annotations": [],
+                "type": "AzureSqlDatabase",
+                "typeProperties": {
+                    "server": "[parameters('fiap_out_sqldb_ls_properties_typeProperties_server')]",
+                    "database": "[parameters('fiap_out_sqldb_ls_properties_typeProperties_database')]",
+                    "encrypt": "mandatory",
+                    "trustServerCertificate": false,
+                    "authenticationType": "SQL",
+                    "userName": "[parameters('fiap_out_sqldb_ls_properties_typeProperties_userName')]",
+                    "password": {
+                        "type": "SecureString",
+                        "value": "[parameters('fiap_out_sqldb_ls_password')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/fiap-dl-sql-pl')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "description": "Dados Covid pand silver do datalake para o sql",
+                "activities": [
+                    {
+                        "name": "DL_to_SQLDB",
+                        "description": "Processo que transfere os dados do DL para p banco de dados  SQL DB",
+                        "type": "Copy",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "DelimitedTextSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "wildcardFileName": "*csv",
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            },
+                            "sink": {
+                                "type": "AzureSqlSink",
+                                "preCopyScript": "DELETE FROM dbo.DadosPnadCovid;\n",
+                                "writeBehavior": "insert",
+                                "sqlWriterUseTableLock": false,
+                                "disableMetricsCollection": false
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
+                                        "source": {
+                                            "name": "uf",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "uf",
+                                            "type": "String",
+                                            "physicalType": "nvarchar"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "regiao",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "regiao",
+                                            "type": "String",
+                                            "physicalType": "nvarchar"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "situacao_domicilio",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "situacao_domicilio",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "idade",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "idade",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "sexo",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "sexo",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "cor",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "cor",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "escolaridade",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "escolaridade",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "tipo_trabalho",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "tipo_trabalho",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "horas_trabalho_semana_normalmente",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "horas_trabalho_semana_normalmente",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "horas_trabalho_semana_passada",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "horas_trabalho_semana_passada",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "faixa_rendimento",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "faixa_rendimento",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "plano_de_saude",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "plano_de_saude",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "dificuldade_respirar",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "dificuldade_respirar",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "perda_olfato_paladar",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "perda_olfato_paladar",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "febre",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "febre",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "tosse",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "tosse",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "dor_no_peito",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "dor_no_peito",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "foi_a_algum_estabelecimento_saude",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "foi_a_algum_estabelecimento_saude",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "fez_teste_covid",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "fez_teste_covid",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "resultado_exames",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "resultado_exames",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "restricao_de_contato",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "restricao_de_contato",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "ano",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "ano",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "name": "mes",
+                                            "type": "String",
+                                            "physicalType": "String"
+                                        },
+                                        "sink": {
+                                            "name": "mes",
+                                            "type": "Int32",
+                                            "physicalType": "int"
+                                        }
+                                    }
+                                ],
+                                "typeConversion": true,
+                                "typeConversionSettings": {
+                                    "allowDataTruncation": true,
+                                    "treatBooleanAsNumber": false
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "silverCSV",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "covidSQL",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "annotations": [],
+                "lastPublishTime": "2026-01-04T17:04:57Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/silverCSV')]",
+                "[concat(variables('factoryId'), '/datasets/covidSQL')]"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "fiap-f3-tc-pnad"
+        },
+        "fiap_input_dl_ls_accountKey": {
+            "value": ""
+        },
+        "fiap_out_sqldb_ls_password": {
+            "value": ""
+        },
+        "fiap_input_dl_ls_properties_typeProperties_url": {
+            "value": "https://fiapf3tcdl.dfs.core.windows.net/"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_server": {
+            "value": "fiapf3tc-srv.database.windows.net"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_database": {
+            "value": "fiapf3tc-db"
+        },
+        "fiap_out_sqldb_ls_properties_typeProperties_userName": {
+            "value": "adm"
+        },
+        "containerUri": {
+            "value": ""
+        },
+        "containerSasToken": {
+            "value": ""
+        }
+    }
+}

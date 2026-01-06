@@ -1,0 +1,37 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "fiap-f3-tc-pnad"
+        },
+        "dataFactory_location": {
+            "type": "string",
+            "defaultValue": "eastus2"
+        },
+        "dataFactory_identity_type": {
+            "type": "string",
+            "defaultValue": "SystemAssigned"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('factoryName')]",
+            "type": "Microsoft.DataFactory/factories",
+            "apiVersion": "2018-06-01",
+            "properties": {},
+            "dependsOn": [],
+            "location": "[parameters('dataFactory_location')]",
+            "identity": {
+                "type": "[parameters('dataFactory_identity_type')]",
+                "principalId": "16b8c94e-29df-4419-a281-f47df116f579",
+                "tenantId": "b739958c-b594-43a7-8dbc-bac843997194"
+            }
+        }
+    ]
+}
